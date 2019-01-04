@@ -1,0 +1,20 @@
+#
+# ApiGen config file
+#
+
+# Charset of scanned files. (multiple values allowed)
+charset:
+    - utf-8
+
+# Dirs or files documentation is generated for.
+source:
+    - src/
+
+# Target dir for documentation.
+destination: docs/api/
+
+# ApiGen template theme name. (default: "default")
+templateTheme: bootstrap
+
+# Generate tree view of classes, interfaces, traits and exceptions.
+tree: true

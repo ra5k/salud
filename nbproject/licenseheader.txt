@@ -1,0 +1,11 @@
+<#if licenseFirst??>
+${licenseFirst}
+</#if>
+${licensePrefix}This file is part of the Salud library
+${licensePrefix}(c) 2019 Ra5k <ra5k@mailbox.org>
+${licensePrefix}
+${licensePrefix}For the full copyright and license information, please view the LICENSE
+${licensePrefix}file that was distributed with this source code.
+<#if licenseLast??>
+${licenseLast}
+</#if>

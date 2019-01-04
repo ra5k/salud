@@ -1,0 +1,164 @@
+@charset 'UTF-8';
+
+body {
+    font-family: sans-serif;
+    color: #666666;
+    margin: 0;
+    padding: 42px 0 0 0;
+    height: 100%;
+}
+
+
+a {
+    text-decoration: none;
+}
+a:hover {
+    color: orangered;
+}
+
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    color: #ddd;
+    background-color: #4B4C50;
+    width: 100%;
+    height: 40px;
+    box-shadow: 0 3px 3px rgba(0, 0, 0, .5);
+}
+
+header a {
+    color: #ddd;
+}
+header a:hover {
+    color: #fff;
+}
+
+header .brand {
+    font-size: 24px;
+    font-weight: 400;
+    padding: 5px 0;
+    display: inline-block;
+}
+
+main {
+    min-height: 500px;
+}
+
+footer {
+    margin-top: 50px;
+    min-height: 300px;
+    border-top: 1px solid #aaa;
+    background-color: #eee;
+    padding-bottom: 10px;
+    
+}
+
+hr {
+    margin: 30px 0;
+    border: none;
+    border-top: 2px solid #ccc;
+}
+
+.container {
+    margin: 0 10px;
+}
+
+.paper {
+    margin: 80px auto;
+    display: table;
+}
+
+.paper .header {
+    background-color: #F7F7F7;
+    padding: 10px 5px;
+}
+
+.paper .location {
+    color: #3c763d;
+    margin-bottom: .25em
+}
+
+table {
+    width: 100%;
+    margin: auto;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+}
+
+table th {
+    text-align: left;
+}
+
+table th, table td {
+    padding: 3px;
+    border: 1px solid #ddd;
+}
+
+table > tbody > tr:nth-of-type(2n+1) {
+    background-color: #f9f9f9;
+}
+
+textarea {
+    width: 100%;
+}
+
+.type-dir, .type-up {
+    color: #3c763d;
+}
+
+.type-dir:after {
+    content: "/";
+}
+
+.type-up:after, .type-up:before {
+    content: "↑";
+}
+
+.type-php {
+    color: #ec971f;
+}
+
+.status {
+    display: table;
+    margin: 50px auto;
+}
+.status > .code {
+    display: table-cell;
+    color: #888888;
+    font-size: 64pt;
+}
+.status > .text {
+    display: table-cell;
+    padding-left: 20px;
+    font-size: 16pt;
+}
+
+.form {
+    display: table;
+}
+
+.form .group {
+    border-top: 1px solid #ccc;
+    padding: 10px 10px;
+}
+
+.form .group:last-child {
+    border-bottom: 1px solid #ccc;
+}
+
+.xdebug-var-dump {
+    padding: 10px;
+    border-radius: 3px;
+    border: 1px solid #aaa;
+    background-color: #fafafa;
+}
+
+h1 small, h2 small, h3 small {
+    opacity: 0.8;
+}
+
+code {
+    color: darkorange;
+}
