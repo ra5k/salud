@@ -9,8 +9,8 @@
 namespace Ra5k\Salud\Template\Php;
 
 // [imports]
-use Ra5k\Salud\Exception\{IoException, InvalidArgumentException};
-use SplFileInfo, Closure;
+use Ra5k\Salud\Exception\{RuntimeException, InvalidArgumentException};
+use Closure;
 
 
 /**

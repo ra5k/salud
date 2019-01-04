@@ -21,7 +21,8 @@ class UtilTest extends BaseTestCase
 
     public function testZero1()
     {
-        new Uri\Zero;
+        $uri = new Uri\Zero;
+        $this->assertEquals('', $uri->toString());
     }
 
     public function testWithHost1()

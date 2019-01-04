@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of the Salud library
- * (c) 2018 GitHub/ra5k
+ * (c) 2019 Ra5k <ra5k@mailbox.org>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -79,7 +79,7 @@ class ComplexTest extends BaseTestCase
     private function render($target)
     {
         ob_start();
-        if ($target->isValid()) {
+        if ($target->isMatch()) {
             $target->response()->write();
         } else {
             echo 'false', PHP_EOL;
