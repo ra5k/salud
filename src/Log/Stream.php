@@ -96,7 +96,7 @@ final class Stream extends Base
      */
     public function log($level, $message, array $context = [])
     {
-        $format  = Param\Format::simple($context, null, ['{', '}']);
+        $format  = Param\Format::simple($context, null);
         $content = $format->render($message);
         $prefix = $this->prefix($level);
         $this->write($level, "$prefix $content");
