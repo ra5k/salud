@@ -22,9 +22,9 @@ class StreamTest extends BaseTestCase
 {
 
     public function test1()
-    {        
+    {
         $log = new Log\Stream('php://stdout');
-        // $log->error("Hello");
+        $log->error("Hello");
         $this->assertTrue(true);
     }
 

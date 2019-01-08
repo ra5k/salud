@@ -7,15 +7,15 @@
      * file that was distributed with this source code.
      */
 
-     use Ra5k\Salud\System\Location;
+     use Ra5k\Salud\System\Context;
 
 ?>
 
 <h2>Quick tests</h2>
 
 <?php
-    $l = new Location();
-    var_dump($l->path());
-    var_dump($l->prefix());
-    var_dump($l->suffix());
+    $c = new Context();
+    var_dump($c->path());
+    var_dump($c->prefix());
+    var_dump($c->suffix());
 ?>

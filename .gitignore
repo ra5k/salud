@@ -4,3 +4,4 @@
 /docs/*.phar
 /composer.lock
 /*.phar
+/test/temp/

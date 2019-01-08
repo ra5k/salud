@@ -59,14 +59,25 @@ final class Stream extends Base
     private $colored;
 
     /**
-     * @param string $filename
+     * Remote info string
+     * @var string
      */
-    public function __construct(string $filename, $format = self::F_DATE, $colored = null)
+    private $remote;
+
+    /**
+     *
+     * @param string $filename
+     * @param string $format
+     * @param bool $colored
+     * @param string $remote
+     */
+    public function __construct(string $filename, string $format = self::F_DATE, bool $colored = null, string $remote = null)
     {
         parent::__construct();
         $this->file = fopen($filename, 'a');
         $this->format = $format;
-        $this->colored = ($colored === null) ? $this->detectTerminal($this->file) : $colored;
+        $this->colored = $colored ?? $this->detectTerminal($this->file);
+        $this->remote = $remote ?? self::remote();
     }
 
     /**
@@ -85,20 +96,61 @@ final class Stream extends Base
      */
     public function log($level, $message, array $context = [])
     {
-        $timestamp = $this->timestamp();
-        $token = $this->token();
         $format  = Param\Format::simple($context, null, ['{', '}']);
         $content = $format->render($message);
-        $this->write($level, "[$timestamp] [$token] [$level] $content");
+        $prefix = $this->prefix($level);
+        $this->write($level, "$prefix $content");
         return $this;
+    }
+
+    /**
+     * @param string $level
+     * @return string
+     */
+    public function prefix($level): string
+    {
+        $prefix = [];
+
+        $timestamp = $this->timestamp();
+        if ($timestamp) {
+            $prefix = ["[$timestamp]"];
+        }
+
+        if ($this->remote) {
+            $prefix[] = $this->remote;
+        }
+
+        $token = $this->token();
+        if ($token) {
+            $prefix[] = "[$token]";
+        }
+
+        $prefix[] = "[$level]";
+        //
+        return implode(" ", $prefix);
     }
 
     /**
      * @return string
      */
-    public function timestamp()
+    public function timestamp(): string
     {
         return date($this->format);
+    }
+
+    /**
+     * Fetch the remote IP address and port from the server variables
+     * @return string
+     */
+    public static function remote(): string
+    {
+        $addr = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
+        $port = filter_input(INPUT_SERVER, 'REMOTE_PORT');
+        $remote = (string) $addr;
+        if ($port) {
+            $remote .= ":$port";
+        }
+        return $remote;
     }
 
     /**
