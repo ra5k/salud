@@ -35,9 +35,20 @@ final class Multi extends Base
     }
 
     /**
+     * @param Log $target
+     * @return self
+     */
+    public function add(Log $target): self
+    {
+        $this->targets[] = $target;
+        return $this;
+    }
+
+    /**
      * @param string $level
      * @param string $message
      * @param array $context
+     * @return void
      */
     public function log($level, $message, array $context = [])
     {
