@@ -32,6 +32,36 @@ final class Context
     private $suffix;
 
     /**
+     * Indicate whether we have to fall back to super global access
+     *
+     * @var bool
+     * @note Due to a bug, filter_input will not work on INPUT_SERVER in the FastCGI API
+     */
+    private static $fallback;
+
+    /**
+     * Contents of the $_SERVER array
+     * @var array
+     */
+    private static $server;
+
+    /**
+     *
+     */
+    public function __construct()
+    {
+        if (self::$server === null) {
+            if (PHP_SAPI == 'cgi-fcgi') {
+                self::$server = (array) $_SERVER;
+                self::$fallback = true;
+            } else {
+                self::$server = [];
+                self::$fallback = false;
+            }
+        }
+    }
+
+    /**
      * @return bool
      */
     public function isFile()
@@ -46,7 +76,7 @@ final class Context
      */
     public function root()
     {
-        return filter_input(INPUT_SERVER, 'DOCUMENT_ROOT');
+        return $this->server('DOCUMENT_ROOT');
     }
 
     /**
@@ -56,8 +86,8 @@ final class Context
     public function path()
     {
         if ($this->path === null) {
-            $url = filter_input(INPUT_SERVER, 'REQUEST_URI');
-            $query = filter_input(INPUT_SERVER, 'QUERY_STRING');
+            $url = $this->server('REQUEST_URI');
+            $query = $this->server('QUERY_STRING');
             if (substr($url, -strlen($query)) == $query) {
                 $path = rtrim(substr($url, 0, -strlen($query)), '?');
             } else {
@@ -76,8 +106,8 @@ final class Context
     public function prefix()
     {
         if ($this->prefix === null) {
-            $script = filter_input(INPUT_SERVER, 'SCRIPT_NAME');
-            $request = filter_input(INPUT_SERVER, 'REQUEST_URI');
+            $script = $this->server('SCRIPT_NAME');
+            $request = $this->server('REQUEST_URI');
             //
             if (PHP_SAPI == 'cli-server') {
                 $prefix = '';
@@ -106,6 +136,20 @@ final class Context
             $this->suffix = (string) substr($this->path(), strlen($this->prefix()));
         }
         return $this->suffix;
+    }
+
+    /**
+     * @param string $variable
+     * @return mixed
+     */
+    private function server(string $variable)
+    {
+        if (self::$fallback) {
+            $value = self::$server[$variable] ?? null;
+        } else {
+            $value = filter_input(INPUT_SERVER, $variable);
+        }
+        return $value;
     }
 
 }
