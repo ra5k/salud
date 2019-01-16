@@ -9,7 +9,7 @@
 namespace Ra5k\Salud\Request;
 
 // [imports]
-use Ra5k\Salud\{Request, Input, Uri, Upload};
+use Ra5k\Salud\{Request, Input, Uri, Upload, System};
 
 
 /**
@@ -29,11 +29,17 @@ final class Sapi implements Request
     private $attributes;
 
     /**
+     * @var System\Context
+     */
+    private $context;
+
+    /**
      * @param array $attributes
      */
     public function __construct(array $attributes = [])
     {
         $this->attributes = $attributes;
+        $this->context = new System\Context();
     }
 
     /**
@@ -41,15 +47,15 @@ final class Sapi implements Request
      */
     public function method(): string
     {
-        return (string) filter_input(INPUT_SERVER, 'REQUEST_METHOD');
+        return (string) $this->context->server('REQUEST_METHOD');
     }
-    
+
     /**
      * @return string
      */
     public function protocol(): string
     {
-        return (string) filter_input(INPUT_SERVER, 'SERVER_PROTOCOL');
+        return (string) $this->context->server('SERVER_PROTOCOL');
     }
 
     /**
@@ -57,9 +63,9 @@ final class Sapi implements Request
      */
     public function uri(): Uri
     {
-        return new Uri\Std(filter_input(INPUT_SERVER, 'REQUEST_URI'));
+        return new Uri\Std($this->context->server('REQUEST_URI'));
     }
-    
+
     /**
      * @return Input\Forward
      */
@@ -87,7 +93,7 @@ final class Sapi implements Request
      */
     public function header($name)
     {
-        return filter_input(INPUT_SERVER, 'HTTP_' . $this->cgiName($name));
+        return $this->context->server('HTTP_' . $this->cgiName($name));
     }
 
     /**

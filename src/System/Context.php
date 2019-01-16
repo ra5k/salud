@@ -142,7 +142,7 @@ final class Context
      * @param string $variable
      * @return mixed
      */
-    private function server(string $variable)
+    public function server(string $variable)
     {
         if (self::$fallback) {
             $value = self::$server[$variable] ?? null;
