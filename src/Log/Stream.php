@@ -10,7 +10,7 @@
 namespace Ra5k\Salud\Log;
 
 // [imports]
-use Ra5k\Salud\{Param, System\StreamInfo};
+use Ra5k\Salud\{Param, System};
 use Psr\Log\LogLevel;
 
 /**
@@ -144,8 +144,9 @@ final class Stream extends Base
      */
     public static function remote(): string
     {
-        $addr = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
-        $port = filter_input(INPUT_SERVER, 'REMOTE_PORT');
+        $sys = new System\Context();
+        $addr = $sys->server('REMOTE_ADDR');
+        $port = $sys->server('REMOTE_PORT');
         $remote = (string) $addr;
         if ($port) {
             $remote .= ":$port";
@@ -180,8 +181,8 @@ final class Stream extends Base
         } else if (function_exists('posix_isatty')) {
             $term = posix_isatty($stream);
         } else {
-            $info = new StreamInfo(fstat($stream));
-            $term = ($info->mode() == StreamInfo::S_IFCHR);
+            $info = new System\StreamInfo(fstat($stream));
+            $term = ($info->mode() == System\StreamInfo::S_IFCHR);
         }
         return $term;
     }

@@ -9,6 +9,9 @@
 
 namespace Ra5k\Salud\Uri;
 
+// [imports]
+use Ra5k\Salud\System;
+
 /**
  * Alternative URI-query parser
  *
@@ -78,7 +81,8 @@ final class Query
      */
     public static function request()
     {
-        return new self(filter_input(INPUT_SERVER, 'QUERY_STRING'));
+        $sys = new System\Context();
+        return new self($sys->server('QUERY_STRING'));
     }
 
     /**

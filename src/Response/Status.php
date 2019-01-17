@@ -9,6 +9,9 @@
 
 namespace Ra5k\Salud\Response;
 
+// [imports]
+use Ra5k\Salud\System;
+
 
 /**
  * A helper class for the HTTP status
@@ -99,7 +102,8 @@ final class Status
     public function __construct(int $code = 200, string $message = '', string $protocol = '')
     {
         if (!$protocol) {
-            $protocol = filter_input(INPUT_SERVER, 'SERVER_PROTOCOL') ?: 'HTTP/1.1';
+            $sys = new System\Context();
+            $protocol = $sys->server('SERVER_PROTOCOL') ?: 'HTTP/1.1';
         }
         if (!$message && isset(self::$messages[$code])) {
             $message = self::$messages[$code];
