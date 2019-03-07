@@ -35,7 +35,7 @@ final class Sapi
     /**
      * @var string
      */
-    private static $script;
+    private static $location;
 
     /**
      * Indicate whether we have to fall back to super global access
@@ -77,12 +77,12 @@ final class Sapi
     /**
      * @return string
      */
-    public static function script(): string
+    public static function location(): string
     {
-        if (self::$script === null) {
-            self::$script = self::root() . self::path();
+        if (self::$location === null) {
+            self::$location = self::root() . self::path();
         }
-        return self::$script;
+        return self::$location;
     }
 
     /**
