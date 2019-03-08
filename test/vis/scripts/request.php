@@ -1,7 +1,7 @@
 <?php
 
     use Ra5k\Salud\Request;
-    $req = new Request\Sapi();
+    $req = new Request\FilterInput();
 
 ?>
 
@@ -12,8 +12,12 @@
 </ul>
 
 <h3>Debug output</h3>
-<?php var_dump($req->get('q')) ?>
-<?php var_dump($req->get('i')) ?>
+
+<pre><?php var_dump($req->get('q')) ?></pre>
+
+<pre><?php var_dump($req->get('i')) ?></pre>
+
+<pre><?= $req->uri() ?></pre>
 
 <hr/>
 

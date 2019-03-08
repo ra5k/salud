@@ -7,10 +7,9 @@
      * file that was distributed with this source code.
      */
 
-     use Ra5k\Salud\System\Context;
+     use Ra5k\Salud\System\Sapi;
 
      // include __DIR__ . "/../../bootstrap.php";
-     $sapi = new Context();
 ?>
 
 <h2>Quick tests</h2>
@@ -18,10 +17,10 @@
 <h3>Server Context</h3>
 
 <h4>Path</h4>
-<?php var_dump($sapi->path()); ?>
+<?php var_dump(Sapi::path()); ?>
 
 <h4>Prefix</h4>
-<?php var_dump($sapi->prefix()); ?>
+<?php var_dump(Sapi::prefix()); ?>
 
 <h4>Suffix</h4>
-<?php var_dump($sapi->suffix()); ?>
+<?php var_dump(Sapi::suffix()); ?>

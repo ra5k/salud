@@ -17,9 +17,9 @@ use Ra5k\Salud\{Upload, Input, System};
 /**
  *
  *
- * @deprecated
+ *
  */
-final class Sapi implements Upload
+final class Files implements Upload
 {
     /**
      * An array with the keys as used be the $_FILES array

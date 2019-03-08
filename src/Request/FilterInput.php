@@ -9,15 +9,20 @@
 namespace Ra5k\Salud\Request;
 
 // [imports]
-use Ra5k\Salud\{Request, Input, Uri, Upload, System};
+use Ra5k\Salud\{Request, Input, Uri, Upload, System\Sapi};
 
 
 /**
  * Fetches request information via PHP's filter_input() function
  *
  */
-final class Sapi implements Request
+final class FilterInput implements Request
 {
+    /**
+     * @var Uri
+     */
+    private $uri;
+    
     /**
      * @var array
      */
@@ -29,17 +34,11 @@ final class Sapi implements Request
     private $attributes;
 
     /**
-     * @var System\Context
-     */
-    private $context;
-
-    /**
      * @param array $attributes
      */
     public function __construct(array $attributes = [])
     {
         $this->attributes = $attributes;
-        $this->context = new System\Context();
     }
 
     /**
@@ -47,7 +46,7 @@ final class Sapi implements Request
      */
     public function method(): string
     {
-        return (string) $this->context->server('REQUEST_METHOD');
+        return (string) Sapi::server('REQUEST_METHOD');
     }
 
     /**
@@ -55,7 +54,7 @@ final class Sapi implements Request
      */
     public function protocol(): string
     {
-        return (string) $this->context->server('SERVER_PROTOCOL');
+        return (string) Sapi::server('SERVER_PROTOCOL');
     }
 
     /**
@@ -63,7 +62,15 @@ final class Sapi implements Request
      */
     public function uri(): Uri
     {
-        return new Uri\Std($this->context->server('REQUEST_URI'));
+        if ($this->uri === null) {
+            $scheme = Sapi::server('REQUEST_SCHEME') ?: 'http';
+            $host = Sapi::server('HTTP_HOST');
+            list ($path, $query) = $this->splitPath(Sapi::server('REQUEST_URI'));
+            $this->uri = new Uri\Std([
+                'scheme' => $scheme, 'host' => $host, 'path' => $path, 'query' => $query
+            ]);
+        }
+        return $this->uri;
     }
 
     /**
@@ -93,7 +100,7 @@ final class Sapi implements Request
      */
     public function header($name)
     {
-        return $this->context->server('HTTP_' . $this->cgiName($name));
+        return Sapi::server('HTTP_' . $this->cgiName($name));
     }
 
     /**
@@ -152,4 +159,17 @@ final class Sapi implements Request
         return str_replace('-', '_', $upper);
     }
 
+    /**
+     * @param string $tail
+     * @return string
+     */
+    private function splitPath($tail)
+    {
+        $parts = explode('?', $tail, 2);
+        if (count($parts) < 2) {
+            $parts[] = '';
+        }
+        return $parts;
+    }
+    
 }

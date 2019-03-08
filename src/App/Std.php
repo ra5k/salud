@@ -75,7 +75,7 @@ final class Std implements App
     {
         set_error_handler([ErrorException::class, 'handler']);
         try {
-            $request = new Request\Sapi();
+            $request = new Request\FilterInput();
             $response = $this->service->handle($request);
             $transport = new Transport\Php($response);
             $transport->sendHeaders($response);

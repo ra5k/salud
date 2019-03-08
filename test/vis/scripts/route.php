@@ -46,7 +46,7 @@
             new F\Prefix('/us', new Re\Instant('US')),
         ])
     ]);
-    $tar = $main->route($req, []);
-    var_dump($tar);
-
+    $tar = $main->route($req, []);    
 ?>
+<pre><?= var_dump($tar); ?></pre>
+
