@@ -51,6 +51,11 @@ abstract class Cached implements Sapi
     private $root;
 
     /**
+     * @var string
+     */
+    private $target;
+
+    /**
      * @param Sapi $origin
      */
     public function __construct(Sapi $origin)
