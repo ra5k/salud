@@ -10,7 +10,7 @@
 namespace Ra5k\Salud\Service;
 
 // [imports]
-use Ra5k\Salud\{Service, Fork, Request, Response, Indicator, System};
+use Ra5k\Salud\{Service, Fork, Request, Response, Indicator, Sapi};
 
 /**
  *
@@ -38,8 +38,8 @@ abstract class Routed implements Service
      */
     protected function route(Request $request): Indicator
     {
-        $context = new System\Context();
-        return $this->fork->route($request, ['path' => $context->suffix()]);        
+        $srv = new Sapi\Auto();
+        return $this->fork->route($request, ['path' => $srv->suffix()]);
     }
 
     /**

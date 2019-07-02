@@ -7,11 +7,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Ra5k\Salud\System;
+namespace Ra5k\Salud\Util;
 
 
 /**
  *
+ *
+ * @deprecated in favour of the Salud\Sapi\* classes
  *
  */
 final class Context

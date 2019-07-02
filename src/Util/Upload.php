@@ -14,7 +14,7 @@ namespace Ra5k\Salud\System;
 /**
  *
  *
- *
+ * @deprecated
  */
 final class Upload
 {

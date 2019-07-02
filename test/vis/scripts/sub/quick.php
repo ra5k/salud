@@ -7,7 +7,7 @@
      * file that was distributed with this source code.
      */
 
-     use Ra5k\Salud\System;
+     use Ra5k\Salud\Sapi;
 
 ?>
 
@@ -15,7 +15,7 @@
 
 <h3>Server Context</h3>
 <?php
-    $c = new System\Context();
+    $c = new Sapi\Auto();
     var_dump($c->prefix());
     var_dump($c->suffix());
 ?>

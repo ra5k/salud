@@ -9,7 +9,7 @@
 namespace Ra5k\Salud\Request;
 
 // [imports]
-use Ra5k\Salud\{Request, Input, Uri, Upload, System};
+use Ra5k\Salud\{Request, Input, Uri, Upload, Sapi as Srv};
 
 
 /**
@@ -29,17 +29,17 @@ final class Sapi implements Request
     private $attributes;
 
     /**
-     * @var System\Context
+     * @var Srv
      */
-    private $context;
+    private $srv;
 
     /**
      * @param array $attributes
      */
-    public function __construct(array $attributes = [])
+    public function __construct(array $attributes = [], Srv $sapi = null)
     {
         $this->attributes = $attributes;
-        $this->context = new System\Context();
+        $this->srv = $sapi ?? new Srv\Auto();
     }
 
     /**
@@ -47,7 +47,7 @@ final class Sapi implements Request
      */
     public function method(): string
     {
-        return (string) $this->context->server('REQUEST_METHOD');
+        return (string) $this->srv->param('REQUEST_METHOD');
     }
 
     /**
@@ -55,7 +55,7 @@ final class Sapi implements Request
      */
     public function protocol(): string
     {
-        return (string) $this->context->server('SERVER_PROTOCOL');
+        return (string) $this->srv->param('SERVER_PROTOCOL');
     }
 
     /**
@@ -63,7 +63,7 @@ final class Sapi implements Request
      */
     public function uri(): Uri
     {
-        return new Uri\Std($this->context->server('REQUEST_URI'));
+        return new Uri\Std($this->srv->param('REQUEST_URI'));
     }
 
     /**
@@ -93,7 +93,7 @@ final class Sapi implements Request
      */
     public function header($name)
     {
-        return $this->context->server('HTTP_' . $this->cgiName($name));
+        return $this->srv->param('HTTP_' . $this->cgiName($name));
     }
 
     /**
@@ -133,6 +133,7 @@ final class Sapi implements Request
     public function uploads(): array
     {
         if ($this->uploads === null) {
+            global $_FILES;
             if (isset($_FILES) && is_array($_FILES)) {
                 $this->uploads = Upload\Sapi::tree($_FILES);
             } else {

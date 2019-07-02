@@ -7,14 +7,14 @@
      * file that was distributed with this source code.
      */
 
-     use Ra5k\Salud\System\Context;
+     use Ra5k\Salud\Sapi;
 
 ?>
 
 <h2>Quick tests</h2>
 
 <?php
-    $c = new Context();
+    $c = new Sapi\Auto();
     var_dump($c->path());
     var_dump($c->prefix());
     var_dump($c->suffix());
