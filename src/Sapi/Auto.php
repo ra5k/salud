@@ -14,7 +14,7 @@ namespace Ra5k\Salud\Sapi;
  *
  *
  */
-final class Auto extends Wrap
+final class Auto extends Cached
 {
     /**
      *
