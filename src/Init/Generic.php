@@ -91,11 +91,10 @@ final class Generic implements Init
     public function log(): Log
     {
         if ($this->log === null) {
-            $debug = ($this->env() == 'development');
             $config = $this->config()->node('log');
             $log = new Log\Multi();
             $file = $config->value('filename');
-            $level = $config->value('level') ?? ($debug ? LogLevel::DEBUG : LogLevel::WARNING);
+            $level = $config->value('level') ?? ($this->debugMode() ? LogLevel::DEBUG : LogLevel::WARNING);
             if ($file) {
                 $log->add(new Log\Limited(new Log\Stream($file), $level));
             } else {
@@ -142,7 +141,7 @@ final class Generic implements Init
     private function errorBlock($exception)
     {
         $token = $this->log->token();
-        if ($this->debug) {
+        if ($this->debugMode()) {
             $view = new Error\DebugPage($exception, $token);
             $buff = new Error\Buffer();
             $buff->write("<style>");
@@ -169,7 +168,7 @@ final class Generic implements Init
     private function errorPage(Throwable $exception)
     {
         $token = $this->log->token();
-        if ($this->debug) {
+        if ($this->debugMode()) {
             $view = new Error\DebugPage($exception, $token);
             $html = $view->page()->content();
         } else {
@@ -187,6 +186,14 @@ final class Generic implements Init
     {
         $format = "in %s(%d): %s";
         $this->log->error(sprintf($format, $error->getFile(), $error->getLine(), $error->getMessage()));
+    }
+    
+    /**
+     * @return bool
+     */
+    private function debugMode(): bool
+    {
+        return ($this->env() == 'development');
     }
     
 }
