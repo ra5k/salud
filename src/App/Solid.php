@@ -28,11 +28,6 @@ final class Solid implements App
     private $service;
 
     /**
-     * @var Request
-     */
-    private $request;
-
-    /**
      * @var Log
      */
     private $log;
@@ -50,7 +45,7 @@ final class Solid implements App
      * @param Log|string|null $log
      * @param bool $debug
      */
-    public function __construct(Service $service, Request $request = null, $log = null, bool $debug = false)
+    public function __construct(Service $service, $log = null, bool $debug = false)
     {
         if ($log instanceof Log) {
             // pass;
@@ -67,7 +62,6 @@ final class Solid implements App
             throw new InvalidArgumentException("Argument 2 is of wrong type ($type)");
         }
         $this->service = $service;
-        $this->request = $request ?? new Request\Sapi();
         $this->log = $log;
         $this->debug = $debug;
     }
@@ -79,7 +73,8 @@ final class Solid implements App
     {
         set_error_handler([ErrorException::class, 'handler']);
         try {
-            $response = $this->service->handle($this->request);
+            $request = new Request\Sapi();
+            $response = $this->service->handle($request);
             $transport = new Transport\Php($response);
             $transport->sendHeaders($response);
             try {
