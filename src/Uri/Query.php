@@ -10,7 +10,7 @@
 namespace Ra5k\Salud\Uri;
 
 // [imports]
-use Ra5k\Salud\System;
+use Ra5k\Salud\Sapi;
 
 /**
  * Alternative URI-query parser
@@ -81,8 +81,8 @@ final class Query
      */
     public static function request()
     {
-        $sys = new System\Context();
-        return new self($sys->server('QUERY_STRING'));
+        $srv = new Sapi\Auto();
+        return new self($srv->param('QUERY_STRING'));
     }
 
     /**

@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Ra5k\Salud\System;
+namespace Ra5k\Salud\Util;
 
 /**
  * A simple class loader a la PSR-4

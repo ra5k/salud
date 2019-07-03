@@ -11,7 +11,7 @@
 namespace Ra5k\Salud\Upload;
 
 // [imports]
-use Ra5k\Salud\{Upload, Input, System};
+use Ra5k\Salud\{Upload, Input};
 
 
 /**
@@ -22,7 +22,7 @@ use Ra5k\Salud\{Upload, Input, System};
 final class Sapi implements Upload
 {
     /**
-     * An array with the keys as used be the $_FILES array
+     * An array with the keys as used by the $_FILES array
      * @var array
      */
     private $info;
@@ -105,12 +105,13 @@ final class Sapi implements Upload
     }
 
     /**
-     * @param array $input
+     * @param array $input  information on the form of the $_FILES super global
+     * 
      * @return array
      */
     public static function tree(array $input = null)
     {
-        return self::promoted(System\Upload::tree($input));
+        return self::promoted(self::format($input));
     }
 
     /**
@@ -129,6 +130,41 @@ final class Sapi implements Upload
             }
         }
         return ($leaf) ? new self($struct) : $children;
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    private static function format(array $data)
+    {
+        $tree = [];
+        foreach ($data as $field => $spec) {
+            if (is_array($spec)) {
+                $target =& $tree[$field];
+                foreach ($spec as $property => $value) {
+                    self::seep($value, $property, $target);
+                }
+            }
+        }
+        return $tree;
+    }
+
+    /**
+     * @param mixed $value
+     * @param string $key
+     * @param array $target
+     */
+    private static function seep($value, $key, &$target)
+    {
+        if (is_array($value)) {
+            foreach ($value as $k => $v) {
+                $t =& $target[$k];
+                self::seep($v, $key, $t);
+            }
+        } else {
+            $target[$key] = $value;
+        }
     }
 
 }

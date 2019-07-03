@@ -14,7 +14,7 @@ use Ra5k\Salud\{Request, Response, Service};
 use Ra5k\Salud\{Fork, Indicator, Exception\BadMethodCallException};
 
 /**
- *
+ * Routing via callback
  *
  *
  */
@@ -38,6 +38,7 @@ final class Proxy implements Fork
      * @param Request $request
      * @param array $context
      * @return Indicator
+     * 
      * @throws BadMethodCallException
      */
     public function route(Request $request, array $context): Indicator

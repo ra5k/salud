@@ -7,31 +7,35 @@
  * file that was distributed with this source code.
  */
 
-namespace Ra5k\Salud\System;
+namespace Ra5k\Salud\Util;
 
 
 /**
+ * Pulls basic information from the server API
  *
- * 
- * @deprecated
- * 
+ * @deprecated in favour of the Salud\Sapi\* classes
  */
-final class Context
+final class Sapi
 {
     /**
      * @var string
      */
-    private $path;
+    private static $path;
 
     /**
      * @var string
      */
-    private $prefix;
+    private static $prefix;
 
     /**
      * @var string
      */
-    private $suffix;
+    private static $suffix;
+
+    /**
+     * @var string
+     */
+    private static $location;
 
     /**
      * Indicate whether we have to fall back to super global access
@@ -50,66 +54,74 @@ final class Context
     /**
      *
      */
-    public function __construct()
+    public static function init()
     {
-        if (self::$server === null) {
-            if (PHP_SAPI == 'cgi-fcgi') {
-                self::$server = (array) $_SERVER;
-                self::$fallback = true;
-            } else {
-                self::$server = [];
-                self::$fallback = false;
-            }
+        if (PHP_SAPI == 'cgi-fcgi') {
+            global $_SERVER;
+            self::$server = (array) $_SERVER;
+            self::$fallback = true;
+        } else {
+            self::$server = [];
+            self::$fallback = false;
         }
     }
 
     /**
-     * @return bool
+     * @return string
      */
-    public function isFile()
+    public static function name()
     {
-        $filename = $this->root() . $this->path();
-        return is_file($filename) || is_link($filename);
+        return PHP_SAPI;
+    }
+
+    /**
+     * @return string
+     */
+    public static function location(): string
+    {
+        if (self::$location === null) {
+            self::$location = self::root() . self::path();
+        }
+        return self::$location;
     }
 
     /**
      * Returns the document root
      * @return string
      */
-    public function root()
+    public static function root(): string
     {
-        return $this->server('DOCUMENT_ROOT');
+        return self::server('DOCUMENT_ROOT');
     }
 
     /**
      * Returns the current request path
      * @return string
      */
-    public function path()
+    public static function path(): string
     {
-        if ($this->path === null) {
-            $url = $this->server('REQUEST_URI');
-            $query = $this->server('QUERY_STRING');
+        if (self::$path === null) {
+            $url = self::server('REQUEST_URI');
+            $query = self::server('QUERY_STRING');
             if (substr($url, -strlen($query)) == $query) {
                 $path = rtrim(substr($url, 0, -strlen($query)), '?');
             } else {
                 $path = parse_url($url, PHP_URL_PATH);
             }
-            $this->path = $path;
+            self::$path = $path;
         }
-        return $this->path;
+        return self::$path;
     }
-
 
     /**
      * Returns the base path of this application
      * @return string
      */
-    public function prefix()
+    public static function prefix()
     {
-        if ($this->prefix === null) {
-            $script = $this->server('SCRIPT_NAME');
-            $request = $this->server('REQUEST_URI');
+        if (self::$prefix === null) {
+            $script = self::server('SCRIPT_NAME');
+            $request = self::server('REQUEST_URI');
             //
             if (PHP_SAPI == 'cli-server') {
                 $prefix = '';
@@ -123,29 +135,32 @@ final class Context
                     $prefix = '';
                 }
             }
-            $this->prefix = (string) $prefix;
+            self::$prefix = (string) $prefix;
         }
-        return $this->prefix;
+        return self::$prefix;
     }
 
     /**
      * Returns the relative path (to the base path) of the current request
      * @return string
      */
-    public function suffix()
+    public static function suffix()
     {
-        if ($this->suffix === null) {
-            $this->suffix = (string) substr($this->path(), strlen($this->prefix()));
+        if (self::$suffix === null) {
+            self::$suffix = (string) substr(self::path(), strlen(self::prefix()));
         }
-        return $this->suffix;
+        return self::$suffix;
     }
 
     /**
      * @param string $variable
      * @return mixed
      */
-    public function server(string $variable)
+    public static function server(string $variable)
     {
+        if (self::$server === null) {
+            self::init();
+        }
         if (self::$fallback) {
             $value = self::$server[$variable] ?? null;
         } else {

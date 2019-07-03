@@ -7,9 +7,10 @@
      * file that was distributed with this source code.
      */
 
-     use Ra5k\Salud\System\Sapi;
+     use Ra5k\Salud\Sapi;
 
      // include __DIR__ . "/../../bootstrap.php";
+     $sapi = new Sapi\Auto();
 ?>
 
 <h2>Quick tests</h2>
