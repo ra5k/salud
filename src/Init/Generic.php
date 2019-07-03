@@ -10,7 +10,7 @@
 namespace Ra5k\Salud\Init;
 
 // [imports]
-use Ra5k\Salud\{Init, Log, Param, Service, Request, Transport};
+use Ra5k\Salud\{Init, Sapi, Log, Param, Config, Service, Request, Transport};
 use Ra5k\Salud\{Exception\ErrorException, Exception\ConfigException};
 use Psr\Log\LogLevel;
 use Throwable;
@@ -23,6 +23,11 @@ use Throwable;
  */
 final class Generic implements Init
 {
+    /**
+     * @var Sapi
+     */
+    private $sapi;
+    
     /**
      * @var Config|string|array
      */
@@ -42,9 +47,10 @@ final class Generic implements Init
     /**
      * @param Config|Param|string|array $config
      */
-    public function __construct($config)
+    public function __construct($config, Sapi $sapi = null)
     {
         $this->config = $config;
+        $this->sapi = $sapi ?? new Sapi\Auto();
     }
 
     /**
@@ -112,7 +118,7 @@ final class Generic implements Init
     {
         set_error_handler([ErrorException::class, 'handler']);
         try {
-            $request = new Request\Solid();
+            $request = new Request\Solid($this->sapi);
             $response = $service->handle($request);
             $transport = new Transport\Php($response);
             $transport->sendHeaders($response);
