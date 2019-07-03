@@ -82,7 +82,7 @@ final class Generic implements Init
      */
     public function env(): string
     {
-        return $this->config()->value('application.environment');
+        return (string) $this->config()->value('application.environment', '');
     }
     
     /**
