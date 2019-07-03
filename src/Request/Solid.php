@@ -9,15 +9,21 @@
 namespace Ra5k\Salud\Request;
 
 // [imports]
-use Ra5k\Salud\{Request, Input, Uri, Upload, System\Sapi};
+use Ra5k\Salud\{Request, Input, Uri, Upload, Sapi};
 
 
 /**
- * Fetches request information via PHP's filter_input() function
+ * Fetches request information via PHP's filter_input() function.
+ * This method is safer than using super globals like $_GET, $_POST, $_COOKIE, ...
  *
  */
-final class FilterInput implements Request
+final class Solid implements Request
 {
+    /**
+     * @var Sapi
+     */
+    private $sapi;
+    
     /**
      * @var Uri
      */
@@ -34,10 +40,12 @@ final class FilterInput implements Request
     private $attributes;
 
     /**
+     * @param Sapi $sapi
      * @param array $attributes
      */
-    public function __construct(array $attributes = [])
+    public function __construct(Sapi $sapi = null, array $attributes = [])
     {
+        $this->sapi = $sapi ?? new Sapi\Auto();
         $this->attributes = $attributes;
     }
 
@@ -46,7 +54,7 @@ final class FilterInput implements Request
      */
     public function method(): string
     {
-        return (string) Sapi::server('REQUEST_METHOD');
+        return (string) $this->srv('REQUEST_METHOD');
     }
 
     /**
@@ -54,7 +62,7 @@ final class FilterInput implements Request
      */
     public function protocol(): string
     {
-        return (string) Sapi::server('SERVER_PROTOCOL');
+        return (string) $this->srv('SERVER_PROTOCOL');
     }
 
     /**
@@ -63,9 +71,9 @@ final class FilterInput implements Request
     public function uri(): Uri
     {
         if ($this->uri === null) {
-            $scheme = Sapi::server('REQUEST_SCHEME') ?: 'http';
-            $host = Sapi::server('HTTP_HOST');
-            list ($path, $query) = $this->splitPath(Sapi::server('REQUEST_URI'));
+            $scheme = $this->srv('REQUEST_SCHEME') ?: 'http';
+            $host = $this->srv('HTTP_HOST');
+            list ($path, $query) = $this->splitPath($this->srv('REQUEST_URI'));
             $this->uri = new Uri\Std([
                 'scheme' => $scheme, 'host' => $host, 'path' => $path, 'query' => $query
             ]);
@@ -100,7 +108,7 @@ final class FilterInput implements Request
      */
     public function header($name)
     {
-        return Sapi::server('HTTP_' . $this->cgiName($name));
+        return $this->srv('HTTP_' . $this->cgiName($name));
     }
 
     /**
@@ -149,6 +157,15 @@ final class FilterInput implements Request
         return $this->uploads;
     }
 
+    /**
+     * @param string $name
+     * @return mixed
+     */
+    private function srv(string $name)
+    {
+        return $this->sapi->param($name);
+    }
+    
     /**
      * @param string $name
      * @return string

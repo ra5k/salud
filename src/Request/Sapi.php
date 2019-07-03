@@ -13,7 +13,8 @@ use Ra5k\Salud\{Request, Input, Uri, Upload, Sapi as Srv};
 
 
 /**
- * Fetches request information via PHP's filter_input() function
+ * 
+ * @deprecated
  *
  */
 final class Sapi implements Request

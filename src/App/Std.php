@@ -75,7 +75,7 @@ final class Std implements App
     {
         set_error_handler([ErrorException::class, 'handler']);
         try {
-            $request = new Request\FilterInput();
+            $request = new Request\Solid();
             $response = $this->service->handle($request);
             $transport = new Transport\Php($response);
             $transport->sendHeaders($response);

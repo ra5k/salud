@@ -1,7 +1,7 @@
 <?php
 
     use Ra5k\Salud\Request;
-    $req = new Request\FilterInput();
+    $req = new Request\Solid();
 
 ?>
 
