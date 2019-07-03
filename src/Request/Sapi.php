@@ -34,12 +34,13 @@ final class Sapi implements Request
     private $srv;
 
     /**
+     * @param Sapi $sapi
      * @param array $attributes
      */
-    public function __construct(array $attributes = [], Srv $sapi = null)
+    public function __construct(Srv $sapi = null, array $attributes = [])
     {
-        $this->attributes = $attributes;
         $this->srv = $sapi ?? new Srv\Auto();
+        $this->attributes = $attributes;
     }
 
     /**

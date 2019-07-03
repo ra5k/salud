@@ -26,11 +26,17 @@ final class Root implements Fork
     private $main;
 
     /**
+     * @var Sapi
+     */
+    private $sapi;
+
+    /**
      * @param Fork $main
      */
-    public function __construct(Fork $main)
+    public function __construct(Fork $main, Sapi $sapi = null)
     {
         $this->main = $main;
+        $this->sapi = $sapi ?? new Sapi\Auto();
     }
 
     /**
@@ -41,8 +47,7 @@ final class Root implements Fork
     public function route(Request $request, array $context): Indicator
     {
         if (!isset($context['path'])) {
-            $sapi = new Sapi\Auto();
-            $context['path'] = $sapi->suffix();
+            $context['path'] = $this->sapi->suffix();
         }
         return $this->main->route($request, $context);
     }
