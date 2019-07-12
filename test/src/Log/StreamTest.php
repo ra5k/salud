@@ -24,7 +24,7 @@ class StreamTest extends BaseTestCase
     public function test1()
     {
         $log = new Log\Stream('php://stdout');
-        $log->error("Hello");
+        $log->debug("Hello");
         $this->assertTrue(true);
     }
 
