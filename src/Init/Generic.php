@@ -43,6 +43,10 @@ final class Generic implements Init
      */
     private $log;
     
+    /**
+     * @var bool
+     */
+    private $trace;
 
     /**
      * @param Config|Param|string|array $config
@@ -96,7 +100,8 @@ final class Generic implements Init
             $file = $config->value('filename');
             $level = $config->value('level') ?? ($this->debugMode() ? LogLevel::DEBUG : LogLevel::WARNING);
             if ($file) {
-                $log->add(new Log\Limited(new Log\Stream($file), $level));
+                $colored = (bool) $config->value('colored', false);
+                $log->add(new Log\Limited(new Log\Stream($file), $level, $colored));
             } else {
                 $log->add(new Log\System);
                 $log->warning("Log file not configured");
@@ -182,10 +187,35 @@ final class Generic implements Init
      *
      * @param Throwable $error
      */
-    private function logException($error)
+    private function logException(Throwable $error)
     {
-        $format = "in %s(%d): %s";
-        $this->log->error(sprintf($format, $error->getFile(), $error->getLine(), $error->getMessage()));
+        $log = $this->log();
+        $log->error(sprintf("in %s(%d): %s", $error->getFile(), $error->getLine(), $error->getMessage()));
+        if ($this->logTraceEnabled()) {
+            foreach ($error->getTrace() as $node) {
+                $class = $this->logClassName($node['class'] ?? '');
+                $func = $node['function'] ?? '';
+                $log->error("  + in {{file}}({{line}}) FUNCTION {{method}}({{args}})", [
+                    'file' => $node['file'] ?? 'UNKNOWN',
+                    'line' => $node['line'] ?? '?',
+                    'method' => $class ? "$class::$func" : "$func",
+                    'args' => implode(", ", $this->debugArgs($node['args'] ?? [])),
+                ]);
+            }
+        }
+    }
+    
+    /**
+     * @param array $args
+     * @return array
+     */
+    private function debugArgs(array $args): array
+    {
+        $info = [];
+        foreach ($args as $a) {
+            $info[] = is_object($a) ? $this->logClassName(get_class($a)) : gettype($a);
+        }
+        return $info;
     }
     
     /**
@@ -194,6 +224,27 @@ final class Generic implements Init
     private function debugMode(): bool
     {
         return ($this->env() == 'development');
+    }
+    
+    /**
+     * @return bool
+     */
+    private function logTraceEnabled(): bool
+    {
+        if ($this->trace === null) {
+            $this->trace = (bool) $this->config()->value('log.trace', $this->debugMode());
+        }
+        return $this->trace;
+    }
+    
+    /**
+     * 
+     * @param string $class
+     * @return string
+     */
+    private function logClassName(string $class): string
+    {
+        return preg_replace(['|^Ra5k\\\\Salud\\\\|', '|^class@anonymous.*|'], ['~', 'class@anonymous'], $class ?? '');
     }
     
 }
