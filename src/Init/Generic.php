@@ -199,11 +199,12 @@ final class Generic implements Init
     {
         $log = $this->log();
         $log->error(sprintf("in %s(%d): %s", $error->getFile(), $error->getLine(), $error->getMessage()));
+        //
         if ($this->logTraceEnabled()) {
             foreach ($error->getTrace() as $node) {
                 $class = $this->logClassName($node['class'] ?? '');
                 $func = $node['function'] ?? '';
-                $log->error("  + in {{file}}({{line}}) FUNCTION {{method}}({{args}})", [
+                $log->debug("  + in {{file}}({{line}}) FUNCTION {{method}}({{args}})", [
                     'file' => $node['file'] ?? 'UNKNOWN',
                     'line' => $node['line'] ?? '?',
                     'method' => $class ? "$class::$func" : "$func",
