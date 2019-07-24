@@ -1,8 +1,8 @@
 <?php
 
 /*
- * This file is part of the Salut library
- * (c) 2017 GitHub/ra5k
+ * This file is part of the Salud library
+ * (c) 2019 GitHub/ra5k
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,7 +11,7 @@
 namespace Ra5k\Salud\Upload;
 
 // [imports]
-use Ra5k\Salud\{Upload, Input, System};
+use Ra5k\Salud\{Upload, Input};
 
 
 /**
@@ -110,7 +110,7 @@ final class Files implements Upload
      */
     public static function tree(array $input = null)
     {
-        return self::promoted(System\Upload::tree($input));
+        return self::promoted(self::format($input));
     }
 
     /**
@@ -131,4 +131,39 @@ final class Files implements Upload
         return ($leaf) ? new self($struct) : $children;
     }
 
+    /**
+     * @param array $data
+     * @return array
+     */
+    private static function format(array $data)
+    {
+        $tree = [];
+        foreach ($data as $field => $spec) {
+            if (is_array($spec)) {
+                $target =& $tree[$field];
+                foreach ($spec as $property => $value) {
+                    self::seep($value, $property, $target);
+                }
+            }
+        }
+        return $tree;
+    }
+
+    /**
+     * @param mixed $value
+     * @param string $key
+     * @param array $target
+     */
+    private static function seep($value, $key, &$target)
+    {
+        if (is_array($value)) {
+            foreach ($value as $k => $v) {
+                $t =& $target[$k];
+                self::seep($v, $key, $t);
+            }
+        } else {
+            $target[$key] = $value;
+        }
+    }
+    
 }

@@ -2,7 +2,7 @@
 
     ini_set('xdebug.var_display_max_depth', 6);
 
-    use Ra5k\Salud\System\Upload;
+    use Ra5k\Salud\Upload;
 
 ?>
 
@@ -22,7 +22,13 @@
 
 <hr/>
 
-<pre>
-<?= var_dump(Upload::origin()) ?>
-<?= var_dump(Upload::tree()) ?>
-</pre>
+<div style="display: flex; flex-direction: row;">
+    <section style="margin: 0 1rem">
+        <h2>$_FILES</h2>
+        <pre><?= var_dump($_FILES) ?></pre>
+    </section>
+    <section style="margin: 0 1rem">
+        <h2>Uploads</h2>
+        <pre><?= var_dump(Upload\Files::tree($_FILES)) ?></pre>
+    </section>
+</div>
