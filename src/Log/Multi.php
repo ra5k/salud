@@ -11,29 +11,47 @@ namespace Ra5k\Salud\Log;
 
 // [imports]
 use Ra5k\Salud\Log;
+use Psr\Log\{LoggerTrait as SingleMethod};
 
 /**
  *
  *
  *
  */
-final class Multi extends Base
+final class Multi implements Log
 {
+    use SingleMethod;
+    
     /**
      * @var Log[]
      */
     private $targets;
 
     /**
+     * @var string
+     */
+    private $token;
+    
+    /**
      *
      * @param Log[] $targets
      */
     public function __construct(Log ...$targets)
     {
-        parent::__construct();
         $this->targets = $targets;
     }
 
+    /**
+     * @return string
+     */
+    public function token(): string
+    {
+        if ($this->token === null) {
+            $this->token = substr(md5(mt_rand() + time()), 0, 6);
+        }
+        return $this->token;
+    }
+    
     /**
      * @param Log $target
      * @return self
@@ -52,8 +70,9 @@ final class Multi extends Base
      */
     public function log($level, $message, array $context = [])
     {
+        $token = $this->token();
         foreach ($this->targets as $log) {
-            $log->log($level, $message, $context);
+            $log->log($level, "[$token] $message", $context);
         }
     }
 

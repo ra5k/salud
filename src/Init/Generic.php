@@ -39,7 +39,7 @@ final class Generic implements Init
     private $params;
     
     /**
-     * @var Log
+     * @var Log\Multi
      */
     private $log;
     
@@ -47,7 +47,7 @@ final class Generic implements Init
      * @var bool
      */
     private $trace;
-
+    
     /**
      * @param Config|Param|string|array $config
      */
@@ -88,30 +88,13 @@ final class Generic implements Init
     {
         return (string) $this->config()->value('application.environment', '');
     }
-    
+
     /**
      * @return Log
      */
     public function log(): Log
     {
-        if ($this->log === null) {
-            $config = $this->config()->node('log');
-            $log = new Log\Multi();
-            $file = $config->value('filename');
-            $level = $config->value('level') ?? ($this->debugMode() ? LogLevel::DEBUG : LogLevel::WARNING);
-            if ($file) {
-                $colored = (bool) $config->value('colored', false);
-                $log->add(new Log\Limited(new Log\Stream($file), $level, $colored));
-            } else {
-                $log->add(new Log\System);
-                $log->warning("Log file not configured");
-            }
-            if (PHP_SAPI == 'cli-server') {
-                $log->add(new Log\Stream('php://stderr', 'D M d H:i:s Y'));
-            }
-            $this->log = $log;
-        }
-        return $this->log;
+        return $this->multiLog();
     }
 
     /**
@@ -140,12 +123,37 @@ final class Generic implements Init
     }
     
     /**
+     * @return Log\Multi
+     */
+    private function multiLog(): Log\Multi
+    {
+        if ($this->log === null) {
+            $config = $this->config()->node('log');
+            $log = new Log\Multi();
+            $file = $config->value('filename');
+            $level = $config->value('level') ?? ($this->debugMode() ? LogLevel::DEBUG : LogLevel::WARNING);
+            if ($file) {
+                $colored = (bool) $config->value('colored');
+                $log->add(new Log\Limited(new Log\Stream($file), $level, $colored));
+            } else {
+                $log->add(new Log\System);
+                $log->warning("Log file not configured");
+            }
+            if (PHP_SAPI == 'cli-server') {
+                $log->add(new Log\Stream('php://stderr', 'D M d H:i:s Y'));
+            }
+            $this->log = $log;
+        }
+        return $this->log;
+    }
+    
+    /**
      * The fallback error block
      * @param Throwable $exception
      */
     private function errorBlock($exception)
     {
-        $token = $this->log->token();
+        $token = $this->multiLog()->token();
         if ($this->debugMode()) {
             $view = new Error\DebugPage($exception, $token);
             $buff = new Error\Buffer();
@@ -172,7 +180,7 @@ final class Generic implements Init
      */
     private function errorPage(Throwable $exception)
     {
-        $token = $this->log->token();
+        $token = $this->multiLog()->token();
         if ($this->debugMode()) {
             $view = new Error\DebugPage($exception, $token);
             $html = $view->page()->content();

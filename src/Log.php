@@ -20,11 +20,5 @@ use Psr\Log\LoggerInterface;
  */
 interface Log extends LoggerInterface
 {
-
-    /**
-     * Returns the session token
-     * @return string
-     */
-    public function token(): string;
-
+    // No additional functionality yet
 }

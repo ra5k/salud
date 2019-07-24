@@ -10,16 +10,19 @@
 namespace Ra5k\Salud\Log;
 
 // [imports]
-use Ra5k\Salud\{Param, Sapi, Util};
-use Psr\Log\LogLevel;
+use Ra5k\Salud\{Log, Param, Sapi, Util};
+use Psr\Log\{LogLevel, LoggerTrait as SingleMethod};
 
 /**
  *
  *
  *
  */
-final class Stream extends Base
+final class Stream implements Log
 {
+    // [traits]
+    use SingleMethod;
+    
     // Color end sequence
     const C_END = "\033[0m";
 
@@ -73,7 +76,6 @@ final class Stream extends Base
      */
     public function __construct(string $filename, string $format = self::F_DATE, bool $colored = null, string $remote = null)
     {
-        parent::__construct();
         $this->file = fopen($filename, 'a');
         $this->format = $format;
         $this->colored = $colored ?? $this->detectTerminal($this->file);
@@ -118,11 +120,6 @@ final class Stream extends Base
 
         if ($this->remote) {
             $prefix[] = $this->remote;
-        }
-
-        $token = $this->token();
-        if ($token) {
-            $prefix[] = "[$token]";
         }
 
         $prefix[] = "[$level]";

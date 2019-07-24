@@ -10,15 +10,18 @@
 namespace Ra5k\Salud\Log;
 
 // [imports]
-use Ra5k\Salud\{Param};
+use Ra5k\Salud\{Log, Param};
+use Psr\Log\{LoggerTrait as SingleMethod};
 
 /**
  *
  *
  *
  */
-final class System extends Base
-{
+final class System implements Log
+{  
+    use SingleMethod;
+
     /**
      * @var int
      */
@@ -29,7 +32,6 @@ final class System extends Base
      */
     public function __construct($target = 0)
     {
-        parent::__construct();
         $this->target = $target;
     }
 
@@ -40,10 +42,9 @@ final class System extends Base
      */
     public function log($level, $message, array $context = [])
     {
-        $token = $this->token();
         $format  = new Param\Format(new Param\Simple($context));
         $content = $format->render($message);
-        error_log("[$token] [$level] $content", $this->target);
+        error_log("[$level] $content", $this->target);
     }
 
 }

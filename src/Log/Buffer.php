@@ -10,16 +10,19 @@
 namespace Ra5k\Salud\Log;
 
 // [imports]
-use Ra5k\Salud\Param;
-use Psr\Log\LogLevel;
+use Ra5k\Salud\{Param, Log};
+use Psr\Log\{LogLevel, LoggerTrait as SingleMethod};
 
 /**
  *
  *
  *
  */
-final class Buffer extends Base
+final class Buffer implements Log
 {
+    // [imports]
+    use SingleMethod;
+
     /**
      * @var string
      */
@@ -30,7 +33,6 @@ final class Buffer extends Base
      */
     public function __construct($threshold = LogLevel::ERROR)
     {
-        parent::__construct();
         $this->buffer = '';
     }
 

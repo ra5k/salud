@@ -11,15 +11,17 @@ namespace Ra5k\Salud\Log;
 
 // [imports]
 use Ra5k\Salud\Log;
-use Psr\Log\LogLevel;
+use Psr\Log\{LogLevel, LoggerTrait as SingleMethod};
 
 /**
  *
  *
  *
  */
-final class Limited extends Base
+final class Limited implements Log
 {
+    use SingleMethod;
+    
     /**
      * Order of the error levels
      * @var array
@@ -51,7 +53,6 @@ final class Limited extends Base
      */
     public function __construct(Log $origin, $threshold = LogLevel::ERROR)
     {
-        parent::__construct();
         $this->origin = $origin;
         $this->threshold = $this->levelOrder($threshold);
     }
